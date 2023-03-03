@@ -56,5 +56,3 @@ function presses(phrase) {
     phrase.toLowerCase().split('').forEach(i => buttons.forEach(j => res += j.indexOf(i) + 1))
     return res
 }
-
-console.log(presses("HOW R U"))
