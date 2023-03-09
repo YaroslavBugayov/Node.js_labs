@@ -16,7 +16,7 @@ const makeRequest = () => {
     
         res.on('data', d => {
             // process.stdout.write(d);
-            getNewsList(d.toString("utf-8"));
+            getNewsList(d.toString('utf-8'));
         });
     });
        
@@ -30,11 +30,18 @@ setTimeout(makeRequest, 1000);
 
 function getNewsList(data : string) {
     const $ = load(data)
-    const wrapper = $('.c-card').each((i, elem) => {
+    const wrapper = $('article').each((i, elem) => {
         const title = $(elem).find('.c-card__title > a').text()
         const date = $(elem).find('.c-bar__label > time').text()
         const views = $(elem).find('.i-views').text().trim()
-        // console.log(`${title} ${date} ${views}`);
+        const image = $(elem).find('.c-card__media > .c-card__embed > img').attr('data-src')
+        const link = $(elem).find('.c-card__title > a').attr('href')
+        const theme = $(elem).find('.c-card__body__embed > .c-card__body > footer > a ').text().trim()
+        // crutch
+        if (theme !== "") {
+            
+        }
+        
     } )
     
 }
