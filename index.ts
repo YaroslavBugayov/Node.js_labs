@@ -1,9 +1,10 @@
 import https from 'https';
+import { load } from 'cheerio'
 
 const options = {
-    hostname: 'gordonua.com',
+    hostname: 'tsn.ua',
     port: 443,
-    path: '/ukr/news.html',
+    path: '/news',
     method: 'GET'
 };
   
@@ -14,7 +15,8 @@ const makeRequest = () => {
         console.log(`statusCode: ${res.statusCode}`);
     
         res.on('data', d => {
-            process.stdout.write(d);
+            // process.stdout.write(d);
+            getNewsList(d.toString("utf-8"));
         });
     });
        
@@ -24,4 +26,15 @@ const makeRequest = () => {
       
     req.end();
 }
-setTimeout(makeRequest, 10000);
+setTimeout(makeRequest, 1000);
+
+function getNewsList(data : string) {
+    const $ = load(data)
+    const wrapper = $('.c-card').each((i, elem) => {
+        const title = $(elem).find('.c-card__title > a').text()
+        const date = $(elem).find('.c-bar__label > time').text()
+        const views = $(elem).find('.i-views').text().trim()
+        // console.log(`${title} ${date} ${views}`);
+    } )
+    
+}
