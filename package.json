@@ -6,6 +6,9 @@
   "scripts": {
     "start": "nodemon index"
   },
+  "nodemonConfig": {
+    "ignore": ["./data/*"]
+  },
   "author": "bobryata",
   "license": "ISC",
   "dependencies": {
