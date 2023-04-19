@@ -1,53 +1,47 @@
-import * as https from 'https';
-import * as cheerio from 'cheerio';
-import * as fs from 'fs/promises';
-import { Data } from './interfaces/data'
+import {runRequestService} from "./services/requestService";
+import * as net from 'net';
+import * as fs from 'fs';
 
-const options = {
-    hostname: 'tsn.ua',
-    port: 443,
-    path: '/news',
-    method: 'GET'
-};
 
-const makeRequest = () => {
-    const req = https.request(options, res => {
-        
-        console.log(`statusCode: ${res.statusCode}`);
-        let data = "";
+runRequestService();
+const server = net.createServer((socket) => {
+    socket.on('data', (data) => {
+        const request = data.toString();
+        const url = request.split(' ')[1];
 
-        res.on('data', chunk => data += chunk );
-        res.on('end', () => getNewsList(data) )
+        if (url === '/') {
+            const files = fs.readdirSync('./data');
+            const response = 'HTTP/1.1 200 OK\n' +
+                'Content-Type: text/html\n\n' +
+                '<!DOCTYPE html>' +
+                `<body><ul>${files.map((file) => `<li><a href="${file}">${file}</a></li>`).join('')}</ul></body>`;
+
+            socket.write(response);
+            socket.end();
+        }
+        else if (url.includes('news')){
+            const fileName = url.substring(1);
+            fs.readFile(`data/${fileName}`, 'utf-8', (err, data) => {
+                if (err) console.log(err);
+                const jsonData = JSON.parse(data);
+                const response = 'HTTP/1.1 200 OK\n' +
+                    'Content-Type: text/html\n\n' +
+                    '<meta charset="UTF-8">' +
+                    `<h1>${fileName}</h1>` +
+                    `<h2>Title: ${jsonData['title']}</h2>` +
+                    `<img src="${jsonData['image']}" alt="">` +
+                    `<div>To see more information, go to <a href="${jsonData['link']}">Link</a></div>` +
+                    `<a href="/"><input type="button" value="Go Back"></a>`
+
+                socket.write(response);
+                socket.end();
+            });
+        }
     });
+});
 
-    req.on('error', error => console.error(error) );
-    req.end();
-}
-setInterval(makeRequest, 60000);
+const port = 8080;
+server.listen(port, () => {
+    console.log(`Server is listening on port ${port}`);
+});
 
-function getNewsList(data: string) {
-    data = data.slice(data.search("<!-- Desktop part -->"), data.search("<!-- End of desktop part -->"))
-    const $ = cheerio.load(data);
-
-    $('article').each((i: number, elem: cheerio.Element) => {
-        const data : Data = {
-            title : $(elem).find('.c-card__title > a').text(),
-            date : $(elem).find('.c-bar__label > time').text(),
-            views : $(elem).find('.i-views').text().trim(),
-            image : $(elem).find('.c-card__media > .c-card__embed > img').attr('data-src'),
-            link : $(elem).find('.c-card__title > a').attr('href'),
-            theme : $(elem).find('.c-card__body__embed > .c-card__body > footer > a ').text().trim()
-        };
-
-        writeData(data, i);
-    });
-        
-}
-
-async function writeData(data: Data, i: number) {
-    try {
-        await fs.writeFile(`./data/news${i}.json`, JSON.stringify(data));
-    } catch (err) {
-        console.log(err);
-    }
-}
