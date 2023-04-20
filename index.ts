@@ -11,22 +11,42 @@ const server = net.createServer((socket) => {
 
         if (url === '/') {
             const files = fs.readdirSync('./data');
-            const response = 'HTTP/1.1 200 OK\n' +
-                'Content-Type: text/html\n\n' +
-                '<!DOCTYPE html>' +
-                `<body><ul>${files.map((file) => `<li><a href="${file}">${file}</a></li>`).join('')}</ul></body>`;
+            const response = `HTTP/1.1 200 OK\n` +
+                `Content-Type: text/html\n\n` +
+                `<!DOCTYPE html>` +
+                `<html>` +
+                `<head>` +
+                `<link rel="stylesheet" type="text/css" href="/styles/main.css">` +
+                `</head>` +
+                `<body><ul>${files.map((file) => `<li><a href="${file}">${file}</a></li>`).join('')}</ul></body>` +
+                `</body>`;
 
             socket.write(response);
             socket.end();
+        }else if (url === '/styles/main.css') {
+          fs.readFile('./styles/main.css', 'utf-8', (err, data) => {
+            if (err) console.log(err);
+            const response = 'HTTP/1.1 200 OK\n' +
+              'Content-Type: text/css\n\n' +
+              data;
+            socket.write(response);
+            socket.end();
+          });
         }
         else if (url.includes('news')){
             const fileName = url.substring(1);
             fs.readFile(`data/${fileName}`, 'utf-8', (err, data) => {
                 if (err) console.log(err);
                 const jsonData = JSON.parse(data);
-                const response = 'HTTP/1.1 200 OK\n' +
-                    'Content-Type: text/html\n\n' +
-                    '<meta charset="UTF-8">' +
+                const response = `HTTP/1.1 200 OK\n` +
+                    `Content-Type: text/html\n\n` +
+                    `<!DOCTYPE html>` +
+                    `<html>` +
+                    `<head>` +
+                    `<meta charset="UTF-8">` +
+                    `<link rel="stylesheet" type="text/css" href="/styles/main.css">` +
+                    `</head>` +
+                    `<body>`+
                     `<h1>${fileName}</h1>` +
                     `<h2>Title: ${jsonData['title']}</h2>` +
                     `<img src="${jsonData['image']}" alt="">` +
