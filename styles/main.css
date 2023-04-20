@@ -1,34 +1,61 @@
-body {
-    font-family: 'Helvetica Neue', sans-serif;
-    background-color: #f2f2f2;
+ul {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0;
+}
+
+li {
+  margin: 10px;
+}
+
+a {
+  color: #000000;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease-in-out;
+}
+
+a:hover {
+  color: #ff0000;
 }
 
 h1 {
-    font-size: 36px;
-    font-weight: bold;
-    color: #222;
-    margin-top: 50px;
-    margin-bottom: 20px;
+  font-size: 2.5em;
+  margin: 30px 0 10px 0;
+  color: #000000;
 }
+
 h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #222;
-    margin-top: 30px;
-    margin-bottom: 10px;
+  font-size: 1.5em;
+  margin: 0;
+  color: #000000;
 }
-ul {
-    list-style-type: none;
-    padding-left: 0;
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
 }
-li {
-    margin-bottom: 5px;
+
+div {
+  font-size: 1.2em;
+  margin: 20px 0;
+  color: #000000;
 }
-a {
-    color: #222;
-    text-decoration: none;
-    transition: color 0.2s ease-in-out;
+
+input[type="button"] {
+  background-color: #ff0000;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 }
-a:hover {
-    color: #FF6B6B;
+
+input[type="button"]:hover {
+  background-color: #000000;
 }
